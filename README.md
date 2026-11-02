@@ -1,11 +1,6 @@
 # Messenger-Python
 
-Eigener Messenger mit:
-
-- Flask
-- MariaDB
-- JavaScript
-- HTML/CSS
+Ein selbst entwickelter Messenger auf Basis von Flask, SQLite und JavaScript.
 
 ## Features
 
@@ -14,6 +9,17 @@ Eigener Messenger mit:
 - Mehrere Mitglieder pro Chat
 - User-Autocomplete
 - Chatwechsel
+- Automatische Datenbankerstellung beim ersten Start
+- Automatische Testdaten für die Entwicklung
+
+## Verwendete Technologien
+
+- Python
+- Flask
+- SQLite
+- JavaScript
+- HTML
+- CSS
 
 ## Installation
 
@@ -21,6 +27,7 @@ Repository klonen:
 
 ```bash
 git clone https://github.com/tihei45/Messenger-Python.git
+cd Messenger-Python
 ```
 
 Abhängigkeiten installieren:
@@ -28,14 +35,6 @@ Abhängigkeiten installieren:
 ```bash
 pip install -r requirements.txt
 ```
-
-Datenbank erstellen:
-
-```sql
-CREATE DATABASE nexus;
-```
-
-Danach `nexus.sql` importieren.
 
 Anwendung starten:
 
@@ -49,17 +48,45 @@ Anschließend im Browser öffnen:
 http://127.0.0.1:5000
 ```
 
-## Verwendete Technologien
+## Datenbank
 
-- Python
-- Flask
-- MariaDB
-- HTML
-- CSS
-- JavaScript
+Beim ersten Start wird automatisch:
+
+- die SQLite-Datenbank `nexus.db` erstellt
+- die Tabellen angelegt
+- Testdaten für Benutzer, Chats und Nachrichten eingefügt
+
+Es ist keine zusätzliche Datenbankinstallation notwendig.
+
+## Projektstruktur
+
+```text
+Messenger-Python
+│
+├── python/
+│   └── app.py
+├── static/
+│   ├── javascript/
+│   └── style/
+├── templates/
+│   └── main.html
+├── requirements.txt
+├── .gitignore
+└── nexus.db
+```
 
 ## Projektstatus
 
-Aktive Entwicklung 🚀
+🚀 Aktive Entwicklung
+
+## Geplante Features
+
+- Benutzeranmeldung
+- Eigene Profile
+- Live-Updates für Nachrichten
+- Datei-Uploads
+- Benachrichtigungen
+
+---
 
 Projekt von Tilo Heinzmann
