@@ -2,14 +2,9 @@ from flask import Flask, render_template,request,jsonify
 import os
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
 import mariadb
+import sqlite3
 
-conn = mariadb.connect(
-    host="localhost",
-    user="root",
-    password="",
-    database="nexus"
-)
-
+conn = sqlite3.connect("nexus.db", check_same_thread=False)
 print("Verbunden")
 
 
@@ -150,7 +145,7 @@ def messages(chatid):
             "userid": message[2],
             "username": message[3],
             "content": message[4],
-            "timestamp": message[5].strftime("%H:%M")
+            "timestamp": message[5][11:16]
         })
     return jsonify(messagesJson)
 
