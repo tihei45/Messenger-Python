@@ -231,3 +231,6 @@ submitBtn.addEventListener("click", async()=>{
 
 )
 
+setInterval(loadMessages, 2000);
+
+
