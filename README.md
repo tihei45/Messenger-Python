@@ -9,7 +9,9 @@ Ein selbst entwickelter Messenger auf Basis von Flask, SQLite und JavaScript.
 - Mehrere Mitglieder pro Chat
 - User-Autocomplete
 - Chatwechsel
-- Automatische Aktualisierung von Nachrichten alle 2 Sekunden
+- Automatische Aktualisierung von Nachrichten (Polling alle 2 Sekunden)
+- Automatische Datenbankerstellung beim ersten Start
+- Automatische Erstellung von Testdaten für die Entwicklung
 
 ## Verwendete Technologien
 
@@ -52,8 +54,10 @@ http://127.0.0.1:5000
 Beim ersten Start wird automatisch:
 
 - die SQLite-Datenbank `nexus.db` erstellt
-- die Tabellen angelegt
-- Testdaten für Benutzer, Chats und Nachrichten eingefügt
+- die benötigten Tabellen angelegt
+- Testbenutzer erstellt
+- Testchats erstellt
+- Testnachrichten erstellt
 
 Es ist keine zusätzliche Datenbankinstallation notwendig.
 
@@ -70,21 +74,44 @@ Messenger-Python
 ├── templates/
 │   └── main.html
 ├── requirements.txt
-├── .gitignore
-└── nexus.db
+├── README.md
+└── .gitignore
 ```
+
+## Aktueller Stand
+
+✅ Chat-Erstellung
+
+✅ Nachrichten senden
+
+✅ Mehrere Mitglieder pro Chat
+
+✅ User-Autocomplete
+
+✅ SQLite-Datenbank
+
+✅ Automatische Datenbankerstellung
+
+✅ Automatische Testdaten
+
+✅ Automatische Nachrichtenaktualisierung
+
+✅ Läuft auf mehreren Geräten im lokalen Netzwerk
+
+✅ Version 1.0 veröffentlicht
+
+## Geplante Features
+
+- Login & Registrierung
+- Benutzerprofile
+- Online-Status
+- Benachrichtigungen
+- Datei- und Bildversand
+- Echtzeitkommunikation über WebSockets
 
 ## Projektstatus
 
 🚀 Aktive Entwicklung
-
-## Geplante Features
-
-- Benutzeranmeldung
-- Eigene Profile
-- Live-Updates für Nachrichten
-- Datei-Uploads
-- Benachrichtigungen
 
 ---
 
