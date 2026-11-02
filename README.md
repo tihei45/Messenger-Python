@@ -9,8 +9,7 @@ Ein selbst entwickelter Messenger auf Basis von Flask, SQLite und JavaScript.
 - Mehrere Mitglieder pro Chat
 - User-Autocomplete
 - Chatwechsel
-- Automatische Datenbankerstellung beim ersten Start
-- Automatische Testdaten für die Entwicklung
+- Automatische Aktualisierung von Nachrichten alle 2 Sekunden
 
 ## Verwendete Technologien
 
