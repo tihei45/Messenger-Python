@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+    <meta charset="UTF-8">
+    <title>Nachrichten</title>
+<link rel="stylesheet" href="/static/style/styleMain.css">
+</head>
+<body>
+    <header>
+        <div class="headerChatname">Projektchat</div>
+        <div class="member"><div class="count">👥 3 Mitglieder</div><div class="memberOnline"><div class="memberOnlineStatus"></div><div class="memberOnlineCount">2 Online</div></div></div>
+        <div class="icon"><div class="settings"> ⚙️</div><div class="datein">📎</div></div>
+
+    </header>
+
+    
+    <nav>
+        <div class="sidebarHeader"><div>💬 Nexus</div><div class="trennlinie"></div> </div>
+        <div class="sidebarContent">
+            <div class="createChat" id="createChat">[+ Neuer Chat]</div>
+            <div class="modal" id="modal">
+                <div class="modal-inner">
+
+                    <h2>Neuen Chat erstellen</h2>
+
+                    <p>
+                        Gib einen Namen für den Chat ein.
+                        Du kannst Teilnehmer später hinzufügen.
+                    </p>
+
+                    <input
+                        type="text"
+                        id="chatName"
+                        placeholder="Chatname eingeben..."
+                        maxlength="50">
+
+
+                    <input 
+                        type="text"
+                        id="memberAdd"
+                        placeholder="Mitglieder Hinzufügen z.B. Max,Moritz..."
+                        maxlength="50"
+                    >
+                    <div id="suggestions"></div>
+
+                    <div class="modal-buttons">
+                        <button id="exitChat">Abbrechen</button>
+                        <button id="submitChat">Erstellen</button>
+                    </div>
+
+                </div>
+            </div>
+
+
+
+
+            <div class="chatContainer">
+
+  
+
+            </div>
+        </div>
+
+        <div class="sidebarFooter"><div class="profile"> 👤 Tilo</div> <br><div class="status"><div class="statusSymbol"></div><div class="statusValue">Online</div></div></div>
+    </nav>
+
+
+    <main>
+        <div class="messages">
+            
+    </main>
+
+
+    <footer>
+        <form action="#" method="get">
+            <textarea name="content" id="content" placeholder="Nachricht eingeben..."></textarea>
+            <button type="button" id="submit">Absenden ➤</button>
+        </form>
+    </footer>
+
+
+
+
+<script src="/static/javascript/main.js"></script>
+
+</body>
+</html>
