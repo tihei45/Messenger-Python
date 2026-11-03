@@ -1,9 +1,8 @@
-from flask import Flask, render_template,request,jsonify
 import os
-BASE_DIR = os.path.dirname(os.path.abspath(__file__))
-import mariadb
 import sqlite3
-
+from datetime import datetime, UTC
+from flask import Flask, jsonify, render_template, request
+DATABASE = "nexus.db"
 
 
 app = Flask(
@@ -13,9 +12,16 @@ app = Flask(
 )
 
 
+def format_timestamp(timestamp_string):
+    timestamp = datetime.fromisoformat(timestamp_string)
+    timestamp = timestamp.replace(tzinfo=UTC)
+    return timestamp.astimezone().strftime("%H:%M")
+
+
+CURRENT_USER_ID = 1
 def create_database():
 
-    conn = sqlite3.connect("nexus.db")
+    sqlite3.connect(DATABASE)
     cursor = conn.cursor()
 
     cursor.execute("""
@@ -59,7 +65,7 @@ def create_database():
 def seed_database():
     import random
 
-    conn = sqlite3.connect("nexus.db")
+    sqlite3.connect(DATABASE)
     cursor = conn.cursor()
 
     # Alte Daten löschen
@@ -189,14 +195,14 @@ def add():
     cursor = conn.cursor()
 
     cursor.execute(
-        """
-        INSERT INTO messages
-        (chatid, userid, content)
-        VALUES
-        (?, ?, ?)
-        """,
-        (chatid, 1, content)
-    )
+    """
+    INSERT INTO messages
+    (chatid, userid, content)
+    VALUES
+    (?, ?, ?)
+    """,
+    (chatid, CURRENT_USER_ID, content)
+)
 
     conn.commit()
 
@@ -225,7 +231,7 @@ def createChat():
                     VALUES
                     (?,?)
                     """,
-                    (chatid,1)
+                    (chatid,CURRENT_USER_ID)
                 )
 
 
@@ -301,7 +307,7 @@ def messages(chatid):
             "userid": message[2],
             "username": message[3],
             "content": message[4],
-            "timestamp": message[5][11:16]
+            "timestamp": format_timestamp(message[5])
         })
     return jsonify(messagesJson)
 
@@ -311,7 +317,7 @@ def chats():
     cursor = conn.cursor()
     cursor.execute(
         """
-        Select * FROM chats
+        Select * FROM chats ORDER BY chatid DESC
             """,
 
         
