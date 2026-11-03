@@ -2,6 +2,8 @@ import os
 import sqlite3
 from datetime import datetime, UTC
 from flask import Flask, jsonify, render_template, request
+from werkzeug.security import generate_password_hash,check_password_hash
+
 DATABASE = "nexus.db"
 
 
@@ -346,6 +348,42 @@ def users():
         userjson.append(user[1])
 
     return jsonify(userjson)
+
+
+
+
+
+@app.route("/register",  methods=["POST"])
+def register():
+    userjson = []
+    data = request.get_json()
+    username = data["username"]
+    password = data["password"]
+    cursor = conn.cursor()
+    cursor.execute(
+            """
+            Select * FROM users
+            WHERE username = ?
+                """,
+            (username,)
+            )
+    result = cursor.fetchone()
+    if result != None:
+        return "Nutzer existiert bereits"
+    password_hash = generate_password_hash(password)
+    cursor.execute("""
+        INSERT INTO users
+        (username, password_hash)
+        VALUES
+        (?, ?)
+        """, (username, password_hash))
+    conn.commit()
+    return "Registrierung erfolgreich"
+
+@app.route("/login")
+def login():
+    return render_template("login.html")
+
 
 if __name__ == "__main__":
     app.run(host="0.0.0.0", port=5000, debug=True)

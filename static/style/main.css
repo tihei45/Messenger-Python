@@ -1,64 +1,14 @@
-:root {
-    /* Hintergrund */
-    --bg-main: #242424;
-    --bg-sidebar: #1A1A1A;
-    --bg-chat: #202020;
-    --bg-message: #2A2A2A;
-    --bg-header: #282828;
-
-    /* Akzent */
-    --accent: #00C896;
-    --accent-hover: #00D8A1;
-    --accent-dark: #00A57C;
-
-    /* Text */
-    --text-primary: #F5F5F5;
-    --text-secondary: #A0A0A0;
-    --text-muted: #6E6E6E;
-
-    /* Rahmen */
-    --border: #303030;
-    --border-active: #D4AF37;
-
-    /* Eingabefelder */
-    --input-bg: #282828;
-    --input-border: #3A3A3A;
-
-    /* Schatten */
-    --shadow: rgba(0, 0, 0, 0.3);
-
-    /* Größen */
-    --sidebar-width: 280px;
-    --header-height: 70px;
-    --input-height: 70px;
-
-    /* Abrundungen */
-    --radius-small: 8px;
-    --radius-medium: 12px;
-    --radius-large: 16px;
-}
-
-*{
-    margin: 0;
-    color: var(--text-primary);
-}
-
-
-
-
 
 body{
-    height: 100vh;
-    width: 100vw;
     display: grid;
-    overflow: hidden;
+
     grid-template-rows: 70px 1fr auto;
-    grid-template-columns: 320px 1fr ;
-    grid-template-areas: 
-    "nav header"
-    "nav main"
-    "nav footer"
-    ;
+    grid-template-columns: 320px 1fr;
+
+    grid-template-areas:
+        "nav header"
+        "nav main"
+        "nav footer";
 }
 
 nav {
