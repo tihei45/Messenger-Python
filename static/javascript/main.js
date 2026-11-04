@@ -6,8 +6,10 @@ const textarea = document.getElementById("content");
 const chatContainer = document.getElementsByClassName("messages")[0];
 const main = document.querySelector("main");
 let userList = [];
-let currentChat = 1;
-
+let currentChat = localStorage.getItem("currentChat");
+if (!currentChat) {
+    currentChat = 1;
+}
 textarea.addEventListener("input", () => {
     textarea.style.height = "auto";
 
@@ -57,7 +59,7 @@ async function loadMessages() {
 
     for (let message of messages) {
         let messageClass = "other";
-        if (message.userid == 1){
+        if (message.userid === CURRENT_USER_ID){
             messageClass = "own"
         }
             
@@ -79,7 +81,9 @@ async function loadChats() {
 
     let response = await fetch("/chats");
     let chats = await response.json();
-
+    if (chats.length > 0 && !chats.some(chat => chat.chatid == currentChat)) {
+        currentChat = chats[0].chatid;
+    }
     chatSidebar.innerHTML = "";
 
     for (let chat of chats) {
@@ -104,6 +108,8 @@ async function loadChats() {
 
             currentChat = chat.dataset.chatid;
 
+            localStorage.setItem("currentChat", currentChat);
+
             console.log("Chat gewechselt zu:", currentChat);
 
             await loadChats();
@@ -113,6 +119,7 @@ async function loadChats() {
 }
 
 async function init() {
+
     await loadChats();
     await loadMessages();
 }

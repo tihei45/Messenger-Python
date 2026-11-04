@@ -65,7 +65,7 @@
 
         {% if logged_in %}
         <div class="sidebarFooter">
-            <div class="profile">👤 Tilo</div>
+            <div class="profile">👤 {{ username }}</div>
             <br>
             <div class="status">
                 <div class="statusSymbol"></div>
@@ -94,8 +94,9 @@
     </footer>
 
 
-
-
+<script>
+    const CURRENT_USER_ID = {{ userid }};
+</script>
 <script src="/static/javascript/main.js"></script>
 
 </body>

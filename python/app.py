@@ -184,8 +184,17 @@ def index():
 
     if CURRENT_USER_ID is None:
         return render_template("login.html")
+    cursor = conn.cursor()
 
-    return render_template("main.html", logged_in=True)
+    cursor.execute("""
+        SELECT username
+        FROM users
+        WHERE userid = ?
+    """, (CURRENT_USER_ID,))
+
+    username = cursor.fetchone()[0]
+
+    return render_template("main.html", logged_in=True,userid=CURRENT_USER_ID, username=username)
 
 
 
@@ -298,6 +307,18 @@ def messages(chatid):
 
     messagesJson = []
     cursor = conn.cursor()
+    cursor.execute("""
+        SELECT *
+        FROM chat_members
+        WHERE chatid = ?
+        AND userid = ?
+    """, (chatid, CURRENT_USER_ID))
+
+    result = cursor.fetchone()
+
+    if result is None:
+        return "Kein Zugriff"
+
     cursor.execute(
         """
         SELECT
@@ -339,8 +360,12 @@ def chats():
     cursor = conn.cursor()
     cursor.execute(
         """
-        Select * FROM chats ORDER BY chatid DESC
-            """,
+        SELECT chats.chatid, chats.chatname
+        FROM chats
+        JOIN chat_members
+            ON chats.chatid = chat_members.chatid
+        WHERE chat_members.userid = ?
+        """,(CURRENT_USER_ID,)
 
         
     )
