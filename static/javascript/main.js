@@ -231,6 +231,30 @@ submitBtn.addEventListener("click", async()=>{
 
 )
 
+let anmelden = document.getElementById("loginFooter")
+if (anmelden){
+anmelden.addEventListener("click", async()=>{
+    window.location.href = "/login"
+})
+}
+
+
+let logout = document.getElementById("logout")
+if (logout){
+logout.addEventListener("click", async() => {
+    let response = await fetch("/logout", {
+        method: "POST"
+    });
+
+    console.log(response.status);
+
+    window.location.href = "/";
+});
+}
+
+
+
+
 setInterval(loadMessages, 2000);
 
 

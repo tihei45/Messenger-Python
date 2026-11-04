@@ -1,4 +1,4 @@
-register = document.getElementById("submitRegister")
+register = document.getElementById("register")
 
 register.addEventListener("click", function(){
     username = document.getElementById("username").value;
@@ -27,5 +27,4 @@ register.addEventListener("click", function(){
 }
 
 })
-
 

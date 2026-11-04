@@ -63,7 +63,20 @@
             </div>
         </div>
 
-        <div class="sidebarFooter"><div class="profile"> 👤 Tilo</div> <br><div class="status"><div class="statusSymbol"></div><div class="statusValue">Online</div></div></div>
+        {% if logged_in %}
+        <div class="sidebarFooter">
+            <div class="profile">👤 Tilo</div>
+            <br>
+            <div class="status">
+                <div class="statusSymbol"></div>
+                <div class="statusValue">Online</div>
+            </div>
+
+            <div id="logout" class="logout">Logout</div>
+        </div>
+        {% else %}
+        <div id="loginFooter">Anmelden</div>
+        {% endif %}
     </nav>
 
 

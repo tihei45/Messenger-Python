@@ -17,7 +17,7 @@ nav {
     background-color: var(--bg-sidebar);
     padding-left: 20px;
     padding-top: 1rem;
-    grid-template-rows: 70px 1fr 70px;
+    grid-template-rows: 70px 1fr auto;
 }
 
 header {
@@ -90,12 +90,7 @@ footer {
     overflow: hidden;
 }
 
-.sidebarFooter:hover{
-    background-color: var(--accent-dark);
-    border-radius: 10px;
-    transform: translateX(10px);
-    border: 1px solid var(--accent);
-}
+
 
 .createChat {
     color: var(--accent);
@@ -481,3 +476,36 @@ button:hover{
 .match:last-child {
     border-bottom: none;
 }
+
+
+
+
+.hidden{
+    display: none;
+}
+
+
+#loginFooter{
+    display: flex;
+    color: var(--accent);
+    cursor: pointer;
+    padding-left: 10px;
+    font-size: x-large;
+}
+
+.sidebarFooter {
+    padding: 15px;
+    gap: 8px;
+    min-height: 100px;
+
+}
+
+#logout{
+    display: flex;
+    color: var(--accent);
+    cursor: pointer;
+    padding-left: 10px;
+    font-size: x-large;
+    user-select: none;
+}
+

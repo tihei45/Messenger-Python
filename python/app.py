@@ -1,7 +1,7 @@
 import os
 import sqlite3
 from datetime import datetime, UTC
-from flask import Flask, jsonify, render_template, request
+from flask import Flask, jsonify, render_template, request,session
 from werkzeug.security import generate_password_hash,check_password_hash
 
 DATABASE = "nexus.db"
@@ -12,7 +12,7 @@ app = Flask(
     template_folder="../templates",
     static_folder="../static"
 )
-
+app.secret_key = "3n9A!xP7m#K2qL8v@R5zY1sD"
 
 def format_timestamp(timestamp_string):
     timestamp = datetime.fromisoformat(timestamp_string)
@@ -20,7 +20,6 @@ def format_timestamp(timestamp_string):
     return timestamp.astimezone().strftime("%H:%M")
 
 
-CURRENT_USER_ID = 1
 def create_database():
 
     sqlite3.connect(DATABASE)
@@ -181,14 +180,20 @@ conn = sqlite3.connect(
 
 @app.route("/")
 def index():
-    return render_template("main.html")
+    CURRENT_USER_ID = session.get("userid")
 
+    if CURRENT_USER_ID is None:
+        return render_template("login.html")
+
+    return render_template("main.html", logged_in=True)
 
 
 
 @app.route("/add", methods=["POST"])
 def add():
-
+    CURRENT_USER_ID = session.get("userid")
+    if CURRENT_USER_ID is None:
+        return "Nicht eingeloggt"
     data = request.get_json()
 
     chatid = data["chatid"]
@@ -212,6 +217,9 @@ def add():
 
 @app.route("/create-chat", methods=["POST"])
 def createChat():
+    CURRENT_USER_ID = session.get("userid")
+    if CURRENT_USER_ID is None:
+        return "Nicht eingeloggt"
     cursor = conn.cursor()
     data = request.get_json()
     chatname = data["chatname"]
@@ -258,7 +266,9 @@ def createChat():
         if result is None:
             continue
         userId = result[0]
-        if userId == 1:
+        if userId == session.get("userid"):
+            if CURRENT_USER_ID is None:
+                return "Nicht eingeloggt"
             continue
         cursor.execute(
                 """
@@ -282,6 +292,10 @@ def createChat():
 
 @app.route("/messages/<chatid>", methods=["GET"])
 def messages(chatid):    
+    CURRENT_USER_ID = session.get("userid")
+    if CURRENT_USER_ID is None:
+        return "Nicht eingeloggt"
+
     messagesJson = []
     cursor = conn.cursor()
     cursor.execute(
@@ -315,6 +329,12 @@ def messages(chatid):
 
 @app.route("/chats", methods=["GET"])
 def chats():
+
+    CURRENT_USER_ID = session.get("userid")
+    if CURRENT_USER_ID is None:
+        return "Nicht eingeloggt"
+    print(session.get("userid"))
+
     chatsjson = []
     cursor = conn.cursor()
     cursor.execute(
@@ -355,7 +375,6 @@ def users():
 
 @app.route("/register",  methods=["POST"])
 def register():
-    userjson = []
     data = request.get_json()
     username = data["username"]
     password = data["password"]
@@ -380,10 +399,59 @@ def register():
     conn.commit()
     return "Registrierung erfolgreich"
 
-@app.route("/login")
+@app.route("/register",  methods=["GET"])
+def register_show():
+    return render_template("register.html")
+
+
+
+
+
+
+@app.route("/login",  methods=["POST"])
 def login():
+    data = request.get_json()
+    username = data["username"]
+    password = data["password"]
+    cursor = conn.cursor()
+    cursor.execute(
+            """
+            Select userid,password_hash FROM users
+            WHERE username = ?
+                """,
+            (username,)
+            )
+    
+    result = cursor.fetchone()
+    if result is None:
+        return "Nuter existiert nicht"
+    userid = result[0]
+    password_hash = result[1]
+    if check_password_hash(password_hash,password):
+        session["userid"] = userid
+        return "Erfolgreich Angemeldet"
+
+
+
+    return "Falsches Passwort eingegeben"
+
+
+
+@app.route("/login",  methods=["GET"])
+def login_show():
     return render_template("login.html")
 
+
+
+@app.route("/logout", methods=["POST"])
+def logout():
+    print("VORHER:", session.get("userid"))
+
+    session.clear()
+
+    print("NACHHER:", session.get("userid"))
+
+    return "OK"
 
 if __name__ == "__main__":
     app.run(host="0.0.0.0", port=5000, debug=True)
