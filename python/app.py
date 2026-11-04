@@ -453,6 +453,7 @@ def login():
     userid = result[0]
     password_hash = result[1]
     if check_password_hash(password_hash,password):
+        session.permanent=True
         session["userid"] = userid
         return "Erfolgreich Angemeldet"
 
