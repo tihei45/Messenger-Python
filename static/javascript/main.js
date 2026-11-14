@@ -25,21 +25,27 @@ textarea.addEventListener("input", () => {
 const submit = document.getElementById("submit");
 
 submit.addEventListener("click", async () => {
+    const file = document.getElementById("file").files[0];
 
     let message = textarea.value;
 
-    if (message.trim()) {
+    if (message.trim()|| file) {
+
+
+
+        const formData = new FormData();
+        formData.append("chatid", currentChat);
+        formData.append("content", message);
+
+        if (file) {
+            formData.append("file", file);
+        }
 
         await fetch("/add", {
             method: "POST",
-            headers: {
-                "Content-Type": "application/json"
-            },
-            body: JSON.stringify({
-                chatid: currentChat,
-                content: message
-            })
+            body: formData
         });
+
 
         textarea.value = "";
         textarea.style.height = "50px";
@@ -58,15 +64,27 @@ async function loadMessages() {
     chatContainer.innerHTML = "";
 
     for (let message of messages) {
+        console.log(message);
         let messageClass = "other";
         if (message.userid === CURRENT_USER_ID){
             messageClass = "own"
         }
             
+        let fileHtml = "";
+        if (message.filename) {
+            fileHtml = `
+                <div class="file">
+                    📎 ${message.filename}
+                </div>
+            `;
+        }
         let html = `
         <div class="message ${messageClass}">
             <div class="sender">${message.username}</div>
             <div class="content">${message.content}</div>
+            <a href="/download/${message.fileid}">
+                📎 ${message.filename}
+            </a>
             <div class="timestamp">${message.timestamp}</div>
         </div>
         `;
@@ -75,6 +93,7 @@ async function loadMessages() {
     }
 
     main.scrollTop = main.scrollHeight;
+    
 }
 
 async function loadChats() {

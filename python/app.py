@@ -1,9 +1,9 @@
 import os
 import sqlite3
 from datetime import datetime, UTC
-from flask import Flask, jsonify, render_template, request,session
+from flask import Flask, jsonify, render_template, request,session,send_from_directory
 from werkzeug.security import generate_password_hash,check_password_hash
-
+import uuid
 DATABASE = "nexus.db"
 
 
@@ -14,6 +14,17 @@ app = Flask(
 )
 app.secret_key = "3n9A!xP7m#K2qL8v@R5zY1sD"
 
+
+
+UPLOAD_FOLDER = os.path.join(
+    os.path.dirname(os.path.abspath(__file__)),
+    "..",
+    "uploads"
+)
+os.makedirs(UPLOAD_FOLDER, exist_ok=True)
+
+app.config["UPLOAD_FOLDER"] = UPLOAD_FOLDER
+
 def format_timestamp(timestamp_string):
     timestamp = datetime.fromisoformat(timestamp_string)
     timestamp = timestamp.replace(tzinfo=UTC)
@@ -22,7 +33,7 @@ def format_timestamp(timestamp_string):
 
 def create_database():
 
-    sqlite3.connect(DATABASE)
+    conn = sqlite3.connect(DATABASE)
     cursor = conn.cursor()
 
     cursor.execute("""
@@ -200,29 +211,71 @@ def index():
 
 @app.route("/add", methods=["POST"])
 def add():
+    cursor = conn.cursor()
     CURRENT_USER_ID = session.get("userid")
+
     if CURRENT_USER_ID is None:
         return "Nicht eingeloggt"
-    data = request.get_json()
 
-    chatid = data["chatid"]
-    content = data["content"]
+    chatid = request.form.get("chatid")
+    content = request.form.get("content")
+    file = request.files.get("file")
 
+    print("Chat:", chatid)
+    print("Text:", content)
+    print("Datei:", file)
     cursor = conn.cursor()
+    if file:
+        original_name = file.filename
+        stored_name = str(uuid.uuid4()) + "_" + file.filename
+        mime_type = file.content_type
+         
+        #Speichern der Datei im Ordner
+        print(file.filename)
+        filepath = os.path.join(
+        app.config["UPLOAD_FOLDER"],
+        stored_name)
+        file.save(filepath)
+        size = os.path.getsize(filepath)
 
-    cursor.execute(
-    """
-    INSERT INTO messages
-    (chatid, userid, content)
-    VALUES
-    (?, ?, ?)
-    """,
-    (chatid, CURRENT_USER_ID, content)
-)
+        #DB file aktualisieren
+        cursor.execute("""
+                INSERT INTO files
+                (original_name, stored_name, mime_type,size)
+                VALUES
+                (?, ?, ?,?)
+            """, (
+                original_name,
+                stored_name,
+                mime_type,
+                size
+            ))
+        fileid = cursor.lastrowid
+        conn.commit()
+    else:
+        fieleid = None
+
+    
+        return "Gespeichert"
+
+
+
+    cursor.execute("""
+        INSERT INTO messages
+        (chatid, userid, content, fileid)
+        VALUES
+        (?, ?, ?,?)
+    """, (
+        chatid,
+        CURRENT_USER_ID,
+        content,
+        fileid
+    ))
 
     conn.commit()
 
     return "Gespeichert"
+
 
 @app.route("/create-chat", methods=["POST"])
 def createChat():
@@ -327,10 +380,14 @@ def messages(chatid):
             messages.userid,
             users.username,
             messages.content,
-            messages.created_at
+            messages.created_at,
+            messages.fileid,
+            files.original_name
         FROM messages
         JOIN users
             ON messages.userid = users.userid
+        LEFT JOIN files
+            ON messages.fileid = files.fileid
         WHERE messages.chatid = ?
          """,
         (chatid,)
@@ -344,9 +401,45 @@ def messages(chatid):
             "userid": message[2],
             "username": message[3],
             "content": message[4],
-            "timestamp": format_timestamp(message[5])
+            "timestamp": format_timestamp(message[5]),
+            "fileid": message[6],
+            "filename": message[7]
         })
+      
     return jsonify(messagesJson)
+
+@app.route("/download/<int:fileid>")
+def download(fileid):
+    cursor = conn.cursor()
+    cursor.execute(
+        """
+        SELECT stored_name, original_name
+        FROM files
+        WHERE fileid = ?
+        """,(fileid,)
+    )
+    result = cursor.fetchone()
+    if result == None:
+        return "Datei nicht gefunden"
+    stored_name = result[0]
+    original_name = result[1]
+
+    ordner = app.config['UPLOAD_FOLDER']
+    datei = stored_name
+    voller_pfad = os.path.join(ordner, datei)
+
+    print(voller_pfad)
+    print(os.path.isfile(voller_pfad))
+
+    print(os.path.abspath(app.config["UPLOAD_FOLDER"]))
+    return send_from_directory(
+    ordner,
+    datei, as_attachment = True,
+    download_name=original_name
+)
+
+
+
 
 @app.route("/chats", methods=["GET"])
 def chats():
@@ -366,9 +459,8 @@ def chats():
             ON chats.chatid = chat_members.chatid
         WHERE chat_members.userid = ?
         """,(CURRENT_USER_ID,)
-
-        
     )
+
     chatValue = cursor.fetchall()
     for chats in chatValue:
         chatsjson.append({
@@ -480,4 +572,4 @@ def logout():
     return "OK"
 
 if __name__ == "__main__":
-    app.run(host="0.0.0.0", port=5000, debug=True)
+    app.run(host="0.0.0.0", port=3000, debug=True)

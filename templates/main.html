@@ -86,12 +86,23 @@
     </main>
 
 
-    <footer>
-        <form action="#" method="get">
-            <textarea name="content" id="content" placeholder="Nachricht eingeben..."></textarea>
-            <button type="button" id="submit">Absenden ➤</button>
-        </form>
-    </footer>
+<footer>
+    <form id="messageForm">
+        <textarea
+            name="content"
+            id="content"
+            placeholder="Nachricht eingeben..."></textarea>
+
+        <input
+            type="file"
+            id="file"
+            name="file">
+
+        <button type="button" id="submit">
+            Absenden ➤
+        </button>
+    </form>
+</footer>
 
 
 <script>
