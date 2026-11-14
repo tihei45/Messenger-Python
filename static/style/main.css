@@ -205,17 +205,21 @@ footer {
 textarea{
     font-size: 18px;
     line-height: 1.4;
+
+    width: calc(100% - 50px);
+
+    resize: none;
     overflow-y: hidden;
     max-height: 300px;
-    width: 80%;
-    resize: none;
+
     margin-left: 50px;
+
     background-color: var(--input-bg);
     border: 1px solid var(--input-border);
     border-radius: var(--radius-medium);
-    justify-content: center;
-    padding-top: 14px;
-    padding-left: 12px;
+
+    padding: 14px 12px;
+
     box-sizing: border-box;
 }
 
@@ -235,18 +239,18 @@ textarea:hover:not(:focus){
     
 footer{
     width: 100%;
-    min-height: 100px;
-    padding-bottom: 10px;
+    background-color: var(--input-bg);
+    padding: 12px 0;
 }
 
 form{
     width: 100%;
-    height: 100%;
-    display: flex;
-    justify-content: space-between;
-    align-items: flex-end;
 
+    display: flex;
+    align-items: flex-end;
+    gap: 20px;
 }
+
 
 button{
     color: var(--text-primary);
@@ -509,3 +513,48 @@ button:hover{
     user-select: none;
 }
 
+
+#file{
+    max-width: 180px;
+    color: transparent;
+
+}
+
+.messageActions{
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    gap: 10px;
+}
+
+.fileButton{
+    display:none;
+}
+
+.fileButton:hover{
+    background-color: var(--accent-hover);
+    transform: translateY(-2px);
+}
+#submit{
+    width: 140px;
+    height: 70px;
+}
+
+.selectedFile{
+    color: var(--accent);
+    max-width: 180px;
+    text-align: right;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    font-size: 13px;
+    min-height: 18px;
+}
+
+
+.messageInputArea{
+    flex: 1;
+
+    display: flex;
+    flex-direction: column;
+}

@@ -71,6 +71,12 @@ def create_database():
     )
     """)
 
+
+    cursor.execute("""
+        ALTER TABLE messages
+        ADD COLUMN fileid INTEGER
+        """)
+
     conn.commit()
     conn.close()
 

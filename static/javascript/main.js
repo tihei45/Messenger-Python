@@ -1,15 +1,30 @@
-
-console.log("JS geladen");
-
 const chatSidebar = document.querySelector(".chatContainer");
 const textarea = document.getElementById("content");
-const chatContainer = document.getElementsByClassName("messages")[0];
+const chatContainer = document.querySelector(".messages");
 const main = document.querySelector("main");
+
+const fileInput = document.getElementById("file");
+const selectedFile = document.getElementById("selectedFile");
+
 let userList = [];
 let currentChat = localStorage.getItem("currentChat");
+
 if (!currentChat) {
     currentChat = 1;
 }
+
+fileInput.addEventListener("change", () => {
+
+    if (fileInput.files.length > 0) {
+        selectedFile.textContent =
+            `📄 ${fileInput.files[0].name}`;
+    }
+    else {
+        selectedFile.textContent = "";
+    }
+
+});
+
 textarea.addEventListener("input", () => {
     textarea.style.height = "auto";
 
@@ -25,7 +40,7 @@ textarea.addEventListener("input", () => {
 const submit = document.getElementById("submit");
 
 submit.addEventListener("click", async () => {
-    const file = document.getElementById("file").files[0];
+    const file = fileInput.files[0];
 
     let message = textarea.value;
 
@@ -49,6 +64,8 @@ submit.addEventListener("click", async () => {
 
         textarea.value = "";
         textarea.style.height = "50px";
+        fileInput.value = "";
+        selectedFile.textContent = "";
 
         await loadMessages();
 
@@ -64,30 +81,48 @@ async function loadMessages() {
     chatContainer.innerHTML = "";
 
     for (let message of messages) {
-        console.log(message);
         let messageClass = "other";
         if (message.userid === CURRENT_USER_ID){
-            messageClass = "own"
+            messageClass = "own";
         }
             
-        let fileHtml = "";
+
+
+        let fileLink = "";
+
         if (message.filename) {
-            fileHtml = `
-                <div class="file">
+            fileLink = `
+                <a class="messageFile"
+                href="/download/${message.fileid}">
                     📎 ${message.filename}
+                </a>
+            `;
+        }
+
+        let contentHtml = "";
+
+        if (message.content) {
+            contentHtml = `
+                <div class="content">
+                    ${message.content}
                 </div>
             `;
         }
+
         let html = `
         <div class="message ${messageClass}">
             <div class="sender">${message.username}</div>
-            <div class="content">${message.content}</div>
-            <a href="/download/${message.fileid}">
-                📎 ${message.filename}
-            </a>
-            <div class="timestamp">${message.timestamp}</div>
+
+            ${contentHtml}
+
+            ${fileLink}
+
+            <div class="timestamp">
+                ${message.timestamp}
+            </div>
         </div>
         `;
+
 
         chatContainer.insertAdjacentHTML("beforeend", html);
     }
@@ -129,7 +164,6 @@ async function loadChats() {
 
             localStorage.setItem("currentChat", currentChat);
 
-            console.log("Chat gewechselt zu:", currentChat);
 
             await loadChats();
             await loadMessages();
@@ -155,7 +189,6 @@ openBtn.addEventListener("click", async () =>{
     let response = await fetch("/users");
     userList = await response.json();
 
-    console.log(userList)
     modal.style.display="flex";
 
     chatName.focus();
@@ -210,7 +243,6 @@ const memberAdd = document.getElementById("memberAdd");
                 memberAdd.focus();
             });
         }
-        console.log(matches);
 });
 
 
@@ -226,7 +258,6 @@ exitBtn.addEventListener("click", () =>{
 submitBtn.addEventListener("click", async()=>{
     let chatName = document.getElementById("chatName").value;
     let user = document.getElementById("memberAdd").value
-    console.log(chatName);
 
     let response = await fetch("/create-chat", {
         method: "POST",
@@ -272,7 +303,6 @@ logout.addEventListener("click", async() => {
         method: "POST"
     });
 
-    console.log(response.status);
 
     window.location.href = "/";
 });
