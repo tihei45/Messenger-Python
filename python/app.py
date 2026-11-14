@@ -183,7 +183,6 @@ def seed_database():
     conn.commit()
     conn.close()
 
-    print("Testdaten erstellt")
 
 if not os.path.exists("nexus.db"):
     create_database()
@@ -227,9 +226,7 @@ def add():
     content = request.form.get("content")
     file = request.files.get("file")
 
-    print("Chat:", chatid)
-    print("Text:", content)
-    print("Datei:", file)
+
     cursor = conn.cursor()
     if file:
         original_name = file.filename
@@ -237,7 +234,6 @@ def add():
         mime_type = file.content_type
          
         #Speichern der Datei im Ordner
-        print(file.filename)
         filepath = os.path.join(
         app.config["UPLOAD_FOLDER"],
         stored_name)
@@ -259,10 +255,9 @@ def add():
         fileid = cursor.lastrowid
         conn.commit()
     else:
-        fieleid = None
+        fileid = None
 
     
-        return "Gespeichert"
 
 
 
@@ -411,7 +406,7 @@ def messages(chatid):
             "fileid": message[6],
             "filename": message[7]
         })
-      
+
     return jsonify(messagesJson)
 
 @app.route("/download/<int:fileid>")
@@ -434,10 +429,7 @@ def download(fileid):
     datei = stored_name
     voller_pfad = os.path.join(ordner, datei)
 
-    print(voller_pfad)
-    print(os.path.isfile(voller_pfad))
 
-    print(os.path.abspath(app.config["UPLOAD_FOLDER"]))
     return send_from_directory(
     ordner,
     datei, as_attachment = True,
@@ -453,7 +445,6 @@ def chats():
     CURRENT_USER_ID = session.get("userid")
     if CURRENT_USER_ID is None:
         return "Nicht eingeloggt"
-    print(session.get("userid"))
 
     chatsjson = []
     cursor = conn.cursor()
@@ -569,11 +560,9 @@ def login_show():
 
 @app.route("/logout", methods=["POST"])
 def logout():
-    print("VORHER:", session.get("userid"))
 
     session.clear()
 
-    print("NACHHER:", session.get("userid"))
 
     return "OK"
 

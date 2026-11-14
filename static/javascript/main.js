@@ -6,6 +6,9 @@ const main = document.querySelector("main");
 const fileInput = document.getElementById("file");
 const selectedFile = document.getElementById("selectedFile");
 
+
+const headerChatName = document.getElementById("headerChatname");
+
 let userList = [];
 let currentChat = localStorage.getItem("currentChat");
 
@@ -102,11 +105,8 @@ async function loadMessages() {
         let contentHtml = "";
 
         if (message.content) {
-            contentHtml = `
-                <div class="content">
-                    ${message.content}
-                </div>
-            `;
+            contentHtml =
+                `<div class="content">${message.content}</div>`;
         }
 
         let html = `
@@ -144,6 +144,8 @@ async function loadChats() {
         let activeClass="";
         if (chat.chatid == currentChat){
             activeClass="chatActive";
+            headerChatName.textContent = chat.chatname;
+
         }
         let html = `
         <div class="chat ${activeClass}" data-chatid="${chat.chatid}">
@@ -307,6 +309,9 @@ logout.addEventListener("click", async() => {
     window.location.href = "/";
 });
 }
+
+
+
 
 
 
